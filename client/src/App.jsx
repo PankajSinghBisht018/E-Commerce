@@ -13,8 +13,6 @@ import Footer from './components/Footer';
 import Cart from './components/Cart';
 import About from './components/About';
 import './index.css';
-import Login from './components/Login';
-import SignUp from './components/SignUp';
 
 function AppContent() {
   const mode = useSelector((state) => state.theme.mode);
@@ -32,8 +30,6 @@ function AppContent() {
       <Navbar Link1="Home" Link2="Products" Link3="Categories" Link4="About" Link5="Contact" />
       <Routes>
         <Route path="/home" element={<Home />} />
-        <Route path="/home" element={<Login />} />
-        <Route path="/home" element={<SignUp />} />
         <Route path="/products" element={<Products />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/contact" element={<Contact />} />

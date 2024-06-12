@@ -8,15 +8,13 @@ import { AppBar, Toolbar, IconButton, Button, InputBase, Box, FormControlLabel, 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { styled } from '@mui/material/styles';
 import { toggleTheme } from '../features/themeSlice';
-import Login from './Login';
-import SignUp from './SignUp';
+import LoginSignUp from './LoginSignUp';
 import logo from './logo.png';
 
 function NavbarUpper() {
   const dispatch = useDispatch();
   const mode = useSelector((state) => state.theme.mode);
   const [loginFormOpen, setLoginFormOpen] = useState(false);
-  const [signUpFormOpen, setSignUpFormOpen] = useState(false);
 
   const handleThemeChange = () => {
     dispatch(toggleTheme());
@@ -26,16 +24,8 @@ function NavbarUpper() {
     setLoginFormOpen(true);
   };
 
-  const handleSignUpButtonClick = () => {
-    setSignUpFormOpen(true);
-  };
-
   const handleLoginFormClose = () => {
     setLoginFormOpen(false);
-  };
-
-  const handleSignUpFormClose = () => {
-    setSignUpFormOpen(false);
   };
 
   const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -113,26 +103,14 @@ function NavbarUpper() {
         </Box>
         <Box className="flex items-center">
           <Button endIcon={<AccountCircleIcon />} onClick={handleLoginButtonClick}>
-            <span className="hidden md:inline">Login</span>
-          </Button>
-        </Box>
-        <Box className="flex items-center">
-          <Button endIcon={<AccountCircleIcon />} onClick={handleSignUpButtonClick}>
-            <span className="hidden md:inline">Sign Up</span>
+            <span className="hidden md:inline">Sign In</span>
           </Button>
         </Box>
       </Toolbar>
       <Modal open={loginFormOpen} onClose={handleLoginFormClose}>
-        <Box>
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
           <Paper>
-            <Login onClose={handleLoginFormClose} />
-          </Paper>
-        </Box>
-      </Modal>
-      <Modal open={signUpFormOpen} onClose={handleSignUpFormClose}>
-        <Box>
-          <Paper>
-            <SignUp onClose={handleSignUpFormClose} />
+            <LoginSignUp onClose={handleLoginFormClose} />
           </Paper>
         </Box>
       </Modal>
