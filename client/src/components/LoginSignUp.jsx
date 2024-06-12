@@ -19,7 +19,7 @@ function TabPanel(props) {
     );
 }
 
-function LoginSignUp({ onClose, setUserInitial }) {
+function LoginSignUp({ onClose}) {
     const [tabValue, setTabValue] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
