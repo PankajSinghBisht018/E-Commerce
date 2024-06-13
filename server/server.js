@@ -1,12 +1,14 @@
 import express, { json, urlencoded } from 'express';
 import cors from 'cors';
 import { connectDB, User } from './mongos.js';
+import bcrypt from 'bcrypt'
 
 const app = express();
+const SECRET_KEY = 'helloworld';
+
 connectDB();
 
 app.use(json());
-
 app.use(urlencoded({ extended: true }));
 app.use(cors());
 
@@ -23,22 +25,21 @@ app.get('/', (req, res) => {
 app.post('/signup', async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'Email already exists' });
     }
-
     const newUser = new User({ email, password });
     await newUser.save();
 
-    res.json({ message: 'Signup successful' });
+    const token = newUser.generateAuthToken();
+
+    res.json({ message: 'Signup successful', token });
   } catch (error) {
-    console.error('Error in signup:', error);
+    console.error('Error signup:', error);
     res.status(500).json({ message: 'Failed At Server Side' });
   }
 });
-
 
 app.post('/login', async (req, res) => {
   try {
@@ -46,17 +47,17 @@ app.post('/login', async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      console.log(`User with email ${email} not found`);
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const isMatch = await user.comparePassword(password);
-    if (isMatch) {
-      res.json({ message: 'Login done'});
-    } else {
-      console.log(`Password Not Match with User ${email}`);
-      res.status(401).json({ message: 'Invalid email or password' });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
+
+    const token = user.generateAuthToken();
+
+    res.json({ message: 'Login done', token });
   } catch (error) {
     console.error('Error during login:', error);
     res.status(500).json({ message: 'Failed At Server Side' });

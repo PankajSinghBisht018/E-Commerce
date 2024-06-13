@@ -19,7 +19,7 @@ function TabPanel(props) {
     );
 }
 
-function LoginSignUp({ onClose}) {
+function LoginSignUp({ onClose }) {
     const [tabValue, setTabValue] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
@@ -46,14 +46,10 @@ function LoginSignUp({ onClose}) {
     const handleLoginSubmit = (values, { setSubmitting }) => {
         axios.post('http://localhost:8000/login', values)
             .then(response => {
-                if (response.data.status === 'success') {
-                    setTimeout(() => {
-                        onClose();
-                        navigate('/home');
-                    }, 3000);
-                } else {
-                    throw new Error('Unexpected response status');
-                }
+                const { token } = response.data;
+                localStorage.setItem('token', token);
+                onClose();
+                navigate('/home');
             })
             .catch(error => {
                 console.error('Login error:', error.response || error.message);
@@ -65,17 +61,15 @@ function LoginSignUp({ onClose}) {
     const handleSignUpSubmit = (values, { setSubmitting }) => {
         axios.post('http://localhost:8000/signup', values)
             .then(response => {
-                if (response.status === 201) {
-                    setSubmitting(false);
-                    setErrorMessage('');
-                } else {
-                    throw new Error('Unexpected response status');
-                }
+                const { token } = response.data;
+                localStorage.setItem('token', token);
+                setSubmitting(false);
+                setErrorMessage('');
+                setTabValue(0);
             })
             .catch(error => {
                 console.error('Signup error:', error.response || error.message);
                 setErrorMessage('User already exists');
-                setTabValue(0);
                 setSubmitting(false);
             });
     };
