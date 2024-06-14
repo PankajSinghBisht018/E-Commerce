@@ -1,20 +1,44 @@
-import React, { useState } from 'react';
-import { NavLink, Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { AppBar, Toolbar, IconButton, Button, InputBase, Box, FormControlLabel, Modal, Paper, Switch } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Button, InputBase, Box, FormControlLabel, Modal, Paper, Switch, Menu, MenuItem } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { styled } from '@mui/material/styles';
-import { toggleTheme } from '../features/themeSlice';
+import { toggleTheme } from '../features/ThemeSlice';
 import LoginSignUp from './LoginSignUp';
 import logo from './logo.png';
+import axios from 'axios';
+import { setUser, clearUser } from '../features/AuthSlice'
 
 function NavbarUpper() {
   const dispatch = useDispatch();
   const mode = useSelector((state) => state.theme.mode);
   const [loginFormOpen, setLoginFormOpen] = useState(false);
+  const { user } = useSelector((state) => state.auth); 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const response = await axios.get('/api/user', {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          dispatch(setUser({ user: response.data, token }));
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+    fetchUser();
+  }, [dispatch]);
 
   const handleThemeChange = () => {
     dispatch(toggleTheme());
@@ -26,6 +50,20 @@ function NavbarUpper() {
 
   const handleLoginFormClose = () => {
     setLoginFormOpen(false);
+  };
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    dispatch(clearUser());
+    navigate('/'); 
   };
 
   const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -102,17 +140,30 @@ function NavbarUpper() {
           </Link>
         </Box>
         <Box className="flex items-center">
-          <Button endIcon={<AccountCircleIcon />} onClick={handleLoginButtonClick}>
-            <span className="hidden md:inline">Sign In</span>
-          </Button>
+          {user ? (
+            <>
+              <Button endIcon={<AccountCircleIcon />} onClick={handleMenuOpen}>
+                {user.email}
+              </Button>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+              >
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <Button endIcon={<AccountCircleIcon />} onClick={handleLoginButtonClick}>
+              <span className="hidden md:inline">Sign In</span>
+            </Button>
+          )}
         </Box>
       </Toolbar>
       <Modal open={loginFormOpen} onClose={handleLoginFormClose}>
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-          <Paper>
-            <LoginSignUp onClose={handleLoginFormClose} />
-          </Paper>
-        </Box>
+        <Paper className="p-4 max-w-sm mx-auto my-16">
+          <LoginSignUp onClose={handleLoginFormClose} />
+        </Paper>
       </Modal>
     </AppBar>
   );
