@@ -31,7 +31,7 @@ const Otp = mongoose.model('Otp', new mongoose.Schema({
 
 const connectDB = async () => {
   try {
-    await mongoose.connect('mongodb://localhost:27017/snapmart', { useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect('mongodb://localhost:27017/snapmart');
     console.log('MongoDB connected');
   } catch (error) {
     console.error('MongoDB connection error:', error);
