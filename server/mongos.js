@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  isAdmin: { type: Boolean, required: true, default: false },
   passwordUpdatedAt: { type: Date, default: Date.now }
 });
 
@@ -17,7 +18,7 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.methods.generateAuthToken = function () {
-  const token = jwt.sign({ _id: this._id, email: this.email }, 'helloworld', { expiresIn: '1h' });
+  const token = jwt.sign({ _id: this._id, email: this.email ,isAdmin: this.isAdmin}, 'helloworld', { expiresIn: '1h' });
   return token;
 };
 

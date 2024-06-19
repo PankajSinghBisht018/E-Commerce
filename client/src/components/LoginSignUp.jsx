@@ -8,7 +8,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+  const { children, value, index } = props;
 
   return (
     <div style={{ display: value !== index ? 'none' : 'block' }}>
@@ -51,23 +51,29 @@ function LoginSignUp({ onClose }) {
 
   const handleLoginSubmit = (values, { setSubmitting }) => {
     axios.post('http://localhost:8000/login', values)
-      .then(response => {
-        const { token } = response.data;
+    .then(response => {
+        const { token, isAdmin } = response.data;
         localStorage.setItem('token', token);
-        onClose();
-        navigate('/home');
+        localStorage.setItem('isAdmin', isAdmin);
+        if (isAdmin) {
+          navigate('/dashboard');
+        } else {
+          navigate('/home');
+        }
       })
-      .catch(error => {
+    .catch(error => {
         console.error('Login error:', error.response || error.message);
         setErrorMessage('Invalid email or password');
         setSubmitting(false);
       });
   };
+  
+  
 
   const handleSignUpSubmit = (values, { setSubmitting }) => {
     axios.post('http://localhost:8000/signup', values)
       .then(response => {
-        const { token } = response.data;
+        const { token , role} = response.data;
         localStorage.setItem('token', token);
         setSubmitting(false);
         setErrorMessage('');

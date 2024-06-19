@@ -27,6 +27,7 @@
     "express-session": "^1.18.0",
     "formik": "^2.4.6",
     "framer-motion": "^11.2.6",
+    "jwt-decode": "^4.0.0",
     "mongodb": "^6.7.0",
     "mongoose": "^8.4.1",
     "nodemailer": "^6.9.13",
