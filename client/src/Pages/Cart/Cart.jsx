@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
-import { incrementQuantity, decrementQuantity, removeFromCart, clearCart } from '../features/CartSlice';
+import { incrementQuantity, decrementQuantity, removeFromCart, clearCart } from '../../features/CartSlice';
 import { Helmet } from 'react-helmet';
 import {TableBody,TableCell} from '@mui/material';
 

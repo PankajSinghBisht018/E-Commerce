@@ -5,14 +5,14 @@ import { useSelector } from 'react-redux';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { getTheme } from './components/theme';
 import Navbar from './components/Navbar';
-import Products from './components/Products';
-import Categories from './components/Categories';
-import Contact from './components/Contact';
-import Home from './components/Home';
+import Products from './Pages/Products/Products';
+import Categories from './Pages/Categories/Categories';
+import Contact from './Pages/Contact/Contact';
+import Home from './Pages/Home/Home';
 import Footer from './components/Footer';
-import Cart from './components/Cart';
-import About from './components/About';
-import Dashboard from './components/Dashboard';
+import Cart from './Pages/Cart/Cart';
+import About from './Pages/About/About';
+import Dashboard from './Pages/Dashboard/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute'; 
 
 function AppContent() {

@@ -5,8 +5,8 @@ import { Button, Grid, Typography } from '@mui/material';
 import { Card, CardContent, CardMedia, Box } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import { motion } from 'framer-motion';
-import { addToCart } from '../features/CartSlice';
-import productsData from './productsData.json';
+import { addToCart } from '../../features/CartSlice';
+import productsData from '../productsData.json';
 
 function Products() {
   const [products, setProducts] = useState(productsData);
