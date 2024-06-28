@@ -19,6 +19,7 @@ function NavbarUpper() {
   const [loginFormOpen, setLoginFormOpen] = useState(false);
   const { user } = useSelector((state) => state.auth); 
   const [anchorEl, setAnchorEl] = useState(null);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -66,6 +67,10 @@ function NavbarUpper() {
     navigate('/'); 
   };
 
+
+  const handleProfile=()=>{
+    navigate('/profile'); 
+  }
   const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     width: 62,
     height: 34,
@@ -150,7 +155,9 @@ function NavbarUpper() {
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
               >
+
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                <MenuItem onClick={handleProfile}>Profile</MenuItem>
               </Menu>
             </>
           ) : (

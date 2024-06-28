@@ -38,8 +38,8 @@ export const signUpUser = async (req, res) => {
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL,
-    pass: process.env.PASSWORD
+    user: 'demoid0077@gmail.com',
+    pass: 'fdymgtcqpqfqvsvj'
   }
 });
 
@@ -51,7 +51,7 @@ export const sendOtp = async (req, res) => {
   try {
     await Otp.create({ email, otp });
     const mailOptions = {
-      from: process.env.EMAIL,
+      from:'demoid0077@gmail.com',
       to: email,
       subject: 'OTP for password reset',
       text: `Your OTP is ${otp}`

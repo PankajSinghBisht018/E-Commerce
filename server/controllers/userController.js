@@ -1,40 +1,47 @@
 import User from '../models/userModel.js';
-import bcrypt from 'bcrypt';
 
-export const signup = async (req, res) => {
+export const getUserProfile = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'Email already exists' });
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
-    const newUser = new User({ email, password });
-    await newUser.save();
-    const token = newUser.generateAuthToken();
-    res.json({ message: 'Signup successful', token });
+    res.json(user);
   } catch (error) {
-    console.error('Error during signup:', error);
-    res.status(500).json({ message: 'Failed At Server Side' });
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-export const login = async (req, res) => {
+export const updateUserProfile = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findById(req.user._id);
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+    user.name = req.body.name || user.name;
+    user.phone = req.body.phone || user.phone;
+    user.address = req.body.address || user.address;
+    user.image = req.body.image || user.image;
+
+    if (req.body.password) {
+      user.password = req.body.password;
     }
 
-    const token = user.generateAuthToken();
-    res.json({ message: 'Login successful', token, isAdmin: user.isAdmin });
+    const updatedUser = await user.save();
+    res.json({
+      _id: updatedUser._id,
+      email: updatedUser.email,
+      name: updatedUser.name,
+      phone: updatedUser.phone,
+      address: updatedUser.address,
+      image: updatedUser.image,
+      isAdmin: updatedUser.isAdmin,
+      token: updatedUser.generateAuthToken(),
+    });
   } catch (error) {
-    console.error('Error during login:', error);
-    res.status(500).json({ message: 'Failed At Server Side' });
+    console.error('Error updating user profile:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };

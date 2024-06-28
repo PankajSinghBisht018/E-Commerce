@@ -1,3 +1,4 @@
+// App.js
 import React, { useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -12,8 +13,6 @@ import Home from './Pages/Home/Home';
 import Footer from './components/Footer';
 import Cart from './Pages/Cart/Cart';
 import About from './Pages/About/About';
-import Dashboard from './Pages/Dashboard/Dashboard';
-import ProtectedRoute from './components/ProtectedRoute'; 
 
 function AppContent() {
   const mode = useSelector((state) => state.theme.mode);
@@ -42,7 +41,6 @@ function AppContent() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/dashboard" element={<ProtectedRoute element={Dashboard} />} />
         <Route path="/" element={<Home />} />
       </Routes>
       <Footer />
