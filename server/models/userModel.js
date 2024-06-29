@@ -5,10 +5,11 @@ import jwt from 'jsonwebtoken';
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  name: { type: String },  
-  phone: { type: String },
-  address: { type: String }, 
-  image: { type: String },
+  name: { type: String, default: ""},  
+  phone: { type: String ,default: ""},
+  address: { type: String,default: "" }, 
+  pincode: { type: String,default: "" }, 
+  image: { type: String , default: ""},
   isAdmin: { type: Boolean, default: false },
 });
 

@@ -19,18 +19,18 @@ export const loginUser = async (req, res) => {
 };
 
 export const signUpUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, name, phone, address ,image ,pincode} = req.body;
   try {
     const userExists = await User.findOne({ email });
     if (userExists) {
-      res.status(400).json({ message: 'User already exists' });
-    } else {
-      const user = new User({ email, password });
-      await user.save();
-      const token = user.generateAuthToken();
-      res.json({ token });
+      return res.status(400).json({ message: 'User already exists' });
     }
+    const user = new User({ email, password, name, phone, address , image,pincode});
+    await user.save();
+    const token = user.generateAuthToken();
+    res.json({ token });
   } catch (error) {
+    console.error('Error signing up user:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

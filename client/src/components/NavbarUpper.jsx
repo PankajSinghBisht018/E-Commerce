@@ -11,7 +11,7 @@ import { toggleTheme } from '../features/ThemeSlice';
 import LoginSignUp from './LoginSignUp';
 import logo from './logo.png';
 import axios from 'axios';
-import { setUser, clearUser } from '../features/AuthSlice'
+import { setUser, clearUser } from '../features/AuthSlice';
 
 function NavbarUpper() {
   const dispatch = useDispatch();
@@ -27,9 +27,9 @@ function NavbarUpper() {
       try {
         const token = localStorage.getItem('token');
         if (token) {
-          const response = await axios.get('/api/user', {
+          const response = await axios.get('http://localhost:8000/user/profile', {
             headers: {
-              'Authorization': `Bearer ${token}`
+              'token': token
             }
           });
           dispatch(setUser({ user: response.data, token }));
@@ -67,10 +67,10 @@ function NavbarUpper() {
     navigate('/'); 
   };
 
-
-  const handleProfile=()=>{
+  const handleProfile = () => {
     navigate('/profile'); 
-  }
+  };
+
   const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     width: 62,
     height: 34,
@@ -155,7 +155,6 @@ function NavbarUpper() {
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
               >
-
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 <MenuItem onClick={handleProfile}>Profile</MenuItem>
               </Menu>
