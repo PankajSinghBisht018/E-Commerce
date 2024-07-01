@@ -57,7 +57,7 @@ function LoginSignUp({ onClose }) {
 
   const handleLoginSubmit = (values, { setSubmitting }) => {
     setLoading(true);
-    axios.post('http://localhost:8000/login', values)
+    axios.post('http://localhost:8000/api/login', values)
       .then(response => {
         const { token, isAdmin } = response.data;
         localStorage.setItem('token', token);
@@ -80,7 +80,7 @@ function LoginSignUp({ onClose }) {
 
   const handleSignUpSubmit = (values, { setSubmitting }) => {
     setLoading(true); 
-    axios.post('http://localhost:8000/signup', values)
+    axios.post('http://localhost:8000/api/signup', values)
       .then(response => {
         const { token } = response.data;
         localStorage.setItem('token', token);
@@ -103,7 +103,7 @@ function LoginSignUp({ onClose }) {
 
   const handleSendOtp = () => {
     setLoading(true); 
-    axios.post('http://localhost:8000/auth/forgot-password', { email })
+    axios.post('http://localhost:8000/api/auth/forgot-password', { email })
       .then(response => {
         setOtpSent(true);
         setErrorMessage('');
@@ -118,7 +118,7 @@ function LoginSignUp({ onClose }) {
 
   const handleVerifyOtp = () => {
     setLoading(true); 
-    axios.post('http://localhost:8000/auth/verify-otp', { email, otp })
+    axios.post('http://localhost:8000/api/auth/verify-otp', { email, otp })
       .then(response => {
         setOtpVerified(true);
         setErrorMessage('');
@@ -133,7 +133,7 @@ function LoginSignUp({ onClose }) {
 
   const handleResetPassword = () => {
     setLoading(true); 
-    axios.post('http://localhost:8000/auth/reset-password', { email, otp, newPassword })
+    axios.post('http://localhost:8000/api/auth/reset-password', { email, otp, newPassword })
       .then(response => {
         const { token } = response.data;
         localStorage.setItem('token', token);

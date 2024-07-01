@@ -2,13 +2,14 @@ import User from '../models/userModel.js';
 import Otp from '../models/otpModel.js';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
+import jwt from 'jsonwebtoken';
 
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
     if (user && await user.matchPassword(password)) {
-      const token = user.generateAuthToken();
+      const token = jwt.sign({ _id: user._id, isAdmin: user.isAdmin }, process.env.SECRET_KEY, { expiresIn: '1h' });
       res.json({ token, isAdmin: user.isAdmin });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
@@ -19,15 +20,15 @@ export const loginUser = async (req, res) => {
 };
 
 export const signUpUser = async (req, res) => {
-  const { email, password, name, phone, address ,image ,pincode} = req.body;
+  const { email, password, name, phone, address, image, pincode } = req.body;
   try {
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
-    const user = new User({ email, password, name, phone, address , image,pincode});
+    const user = new User({ email, password, name, phone, address, image, pincode });
     await user.save();
-    const token = user.generateAuthToken();
+    const token = jwt.sign({ _id: user._id, isAdmin: user.isAdmin }, process.env.SECRET_KEY, { expiresIn: '1h' });
     res.json({ token });
   } catch (error) {
     console.error('Error signing up user:', error);
@@ -88,14 +89,20 @@ export const resetPassword = async (req, res) => {
     const validOtp = await Otp.findOne({ email, otp });
     if (validOtp) {
       const user = await User.findOne({ email });
-      user.password = await bcrypt.hash(newPassword, 10);
-      await user.save();
-      const token = user.generateAuthToken();
-      res.json({ token });
+      if (user) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+        await user.save();
+        const token = user.generateAuthToken();
+        res.json({ token });
+      } else {
+        res.status(400).json({ message: 'User not found' });
+      }
     } else {
       res.status(400).json({ message: 'Invalid OTP' });
     }
   } catch (error) {
+    console.error('Error resetting password:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

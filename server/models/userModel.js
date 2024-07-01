@@ -11,6 +11,10 @@ const userSchema = new mongoose.Schema({
   pincode: { type: String,default: "" }, 
   image: { type: String , default: ""},
   isAdmin: { type: Boolean, default: false },
+  
+},
+{
+  timestamps:true
 });
 
 userSchema.pre('save', async function (next) {

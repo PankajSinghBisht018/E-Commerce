@@ -12,7 +12,7 @@ connectDB();
 app.use(express.json());
 app.use(cors());
 
-app.use('/', authRoutes);
+app.use('/api', authRoutes);
 
 const PORT =  8000;
 
