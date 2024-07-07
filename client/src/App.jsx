@@ -13,6 +13,7 @@ import Footer from './components/Footer';
 import Cart from './Pages/Cart/Cart';
 import About from './Pages/About/About';
 import Profile from './components/Profile';
+import Dashboard from './Pages/Dashboard/Dashboard';
 
 function AppContent() {
   const mode = useSelector((state) => state.theme.mode);
@@ -42,6 +43,7 @@ function AppContent() {
         <Route path="/about" element={<About />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path ="/dashboard" element={<Dashboard />} />
         <Route path="/" element={<Home />} />
       </Routes>
       <Footer />

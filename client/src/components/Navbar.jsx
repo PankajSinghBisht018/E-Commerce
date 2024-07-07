@@ -73,17 +73,7 @@ function Navbar({ Link1, Link2, Link3, Link4, Link5,}) {
                     {Link5}
                   </NavLink>
                 </li>
-                
-                  <li className="mb-4 sm:mb-0">
-                    <NavLink
-                      to="/dashboard"
-                      className={({ isActive }) =>
-                        `block py-2 ${isActive ? 'text-rose-500 ' : ''} relative hover:text-rose-500 hover:after:bg-rose-500 hover:after:h-0.5 hover:after:block hover:after:content:'' hover:after:absolute hover:after:w-full hover:after:bottom-0`
-                      }
-                    >
-                      Dashboard
-                    </NavLink>
-                  </li>
+
               
               </ul>
             </div>
@@ -151,14 +141,6 @@ function Navbar({ Link1, Link2, Link3, Link4, Link5,}) {
             >
               <ListItemText primary={Link5} />
             </ListItem>
-            
-              <ListItem
-                component={NavLink}
-                to="/dashboard"
-                onClick={toggleMenu}
-              >
-                <ListItemText primary="Dashboard" />
-              </ListItem>
           
           </List>
         </Drawer>

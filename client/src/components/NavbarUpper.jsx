@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faSun, faMoon } from '@fortawesome/free-solid-svg-icons'; 
+import { faSearch, faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import {AppBar,Toolbar,IconButton,Button,InputBase,Box,Modal,Paper,Menu,MenuItem,} from '@mui/material';
+import { AppBar, Toolbar, IconButton, Button, InputBase, Box, Modal, Paper, Menu, MenuItem } from '@mui/material';
 import LoginSignUp from './LoginSignUp';
 import logo from './logo.png';
 import axios from 'axios';
@@ -16,7 +16,7 @@ function NavbarUpper() {
   const dispatch = useDispatch();
   const mode = useSelector((state) => state.theme.mode);
   const [loginFormOpen, setLoginFormOpen] = useState(false);
-  const { user } = useSelector((state) => state.auth);
+  const { user, isAdmin } = useSelector((state) => state.auth);
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
 
@@ -30,7 +30,7 @@ function NavbarUpper() {
               'token': token,
             },
           });
-          dispatch(setUser({ user: response.data, token }));
+          dispatch(setUser({ user: response.data, token, isAdmin: response.data.isAdmin }));
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -69,6 +69,10 @@ function NavbarUpper() {
     navigate('/profile');
   };
 
+  const handleDashboard = () => {
+    navigate('/dashboard');
+  };
+
   return (
     <AppBar position="static" sx={{ backgroundColor: mode === 'light' ? 'white' : '#212121', borderBottom: '1px solid #e0e0e0' }}>
       <Toolbar className="flex justify-between">
@@ -92,9 +96,9 @@ function NavbarUpper() {
         <Box className="flex items-center space-x-2">
           <IconButton onClick={handleThemeChange}>
             {mode === 'light' ? (
-              <FontAwesomeIcon icon={faSun} /> 
+              <FontAwesomeIcon icon={faSun} />
             ) : (
-              <FontAwesomeIcon icon={faMoon} /> 
+              <FontAwesomeIcon icon={faMoon} />
             )}
           </IconButton>
           <Link to="/cart" className="hidden md:flex items-center">
@@ -112,7 +116,11 @@ function NavbarUpper() {
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
               >
-                <MenuItem onClick={handleProfile}>Profile</MenuItem>
+                {isAdmin ? (
+                  <MenuItem onClick={handleDashboard}>Dashboard</MenuItem>
+                ) : (
+                  <MenuItem onClick={handleProfile}>Profile</MenuItem>
+                )}
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </>
