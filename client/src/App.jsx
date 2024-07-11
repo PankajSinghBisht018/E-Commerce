@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo,useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { useSelector } from 'react-redux';
@@ -14,10 +14,20 @@ import Cart from './Pages/Cart/Cart';
 import About from './Pages/About/About';
 import Profile from './components/Profile';
 import Dashboard from './Pages/Dashboard/Dashboard';
+import ProductDetail from './Pages/Products/ProductDetails';
+import { useDispatch } from 'react-redux';
+import { fetchProducts } from './features/ProductSlice';
 
 function AppContent() {
   const mode = useSelector((state) => state.theme.mode);
   const theme = useMemo(() => getTheme(mode), [mode]);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -38,12 +48,13 @@ function AppContent() {
       <Routes>
         <Route path="/home" element={<Home />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/products/:productId" element={<ProductDetail />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path ="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/" element={<Home />} />
       </Routes>
       <Footer />
