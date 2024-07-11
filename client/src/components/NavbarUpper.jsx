@@ -18,6 +18,7 @@ function NavbarUpper() {
   const [loginFormOpen, setLoginFormOpen] = useState(false);
   const { user, isAdmin } = useSelector((state) => state.auth);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -73,6 +74,15 @@ function NavbarUpper() {
     navigate('/dashboard');
   };
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    navigate(`/products?search=${searchTerm}`);
+  };
+
   return (
     <AppBar position="static" sx={{ backgroundColor: mode === 'light' ? 'white' : '#212121', borderBottom: '1px solid #e0e0e0' }}>
       <Toolbar className="flex justify-between">
@@ -82,11 +92,13 @@ function NavbarUpper() {
           </NavLink>
         </Box>
         <Box className="flex-1 flex justify-center px-4 md:px-10">
-          <form className="w-full flex items-center">
+          <form className="w-full flex items-center" onSubmit={handleSearchSubmit}>
             <InputBase
               placeholder="Search..."
               inputProps={{ 'aria-label': 'search' }}
               className="flex-grow px-3 py-2 border border-gray-300 rounded-l focus:outline-none"
+              value={searchTerm}
+              onChange={handleSearchChange}
             />
             <IconButton type="submit" className="bg-blue-600 text-white rounded-r px-3 py-2">
               <FontAwesomeIcon icon={faSearch} />
