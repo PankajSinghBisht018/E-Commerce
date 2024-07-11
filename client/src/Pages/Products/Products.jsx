@@ -1,28 +1,40 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Helmet } from 'react-helmet';
-import { Button, Grid, Typography } from '@mui/material';
-import { Card, CardContent, CardMedia, Box } from '@mui/material';
+import { Button, Grid, Typography, Box, Card, CardContent, CardMedia, Slider } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import { motion } from 'framer-motion';
 import { addToCart } from '../../features/CartSlice';
-import productsData from '../productsData.json';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function Products() {
-  const [products, setProducts] = useState(productsData);
+  const products = useSelector(state => state.products.items);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const searchTerm = searchParams.get('search') || '';
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
+  const [priceRange, setPriceRange] = useState([0, 1000]);
+
+  const handlePriceChange = (event, newValue) => {
+    setPriceRange(newValue);
+  };
+
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    product.price >= priceRange[0] &&
+    product.price <= priceRange[1]
+  );
 
   const indexLastProduct = currentPage * itemsPerPage;
   const indexFirstProduct = indexLastProduct - itemsPerPage;
-  const currentProducts = products.slice(indexFirstProduct, indexLastProduct);
-  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const currentProducts = filteredProducts.slice(indexFirstProduct, indexLastProduct);
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
-  const handleNext = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
+  const handleAddToCart = (product) => {
+    dispatch(addToCart(product));
   };
 
   const handlePrev = () => {
@@ -31,103 +43,101 @@ function Products() {
     }
   };
 
-  const handleAddToCart = (product) => {
-    dispatch(addToCart(product));
+  const handleNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   return (
     <>
       <Helmet>
-        <meta charSet="utf-8" />
-        <title>SnapMart - Products</title>
-        <meta name="description" content="Products" />
-        <link rel="icon" type="image/png" href="/logo.png" />
+        <title>Products</title>
       </Helmet>
-      <div className="container mx-auto py-8">
-        <Typography variant="h3" align="center" gutterBottom>
-          Products
-        </Typography>
-        <Grid container spacing={3}>
-          {currentProducts.map((product) => (
-            <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative', my: 1.5, cursor: 'pointer' }}>
-                  <Box sx={{ position: 'absolute', top: 0, left: 0, bgcolor: 'yellow', zIndex: 10, borderRadius: '0 0 4px 0', px: 1.5, py: 0.5 }}>
-                    <Typography variant="caption" fontWeight="bold">
-                      ₹{product.discount} OFF
-                    </Typography>
-                  </Box>
-                  <CardMedia
-                    component="img"
-                    src={product.image}
-                    alt={product.name}
-                    sx={{ objectFit: 'contain', height: { xs: '112px', sm: '160px' }, my: 3, mx: 'auto' }}
-                  />
-                  <CardContent sx={{ flex: '1 0 auto' }}>
-                    <Typography variant="h6" className="line-clamp-2" title={product.name} sx={{ height: '36px', mx: 1 }}>
-                      {product.name}
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 1, mx: 1 }}>
-                      <Rating name="read-only" value={product.rating} readOnly size="small" />
-                      <Typography variant="body2" color="text.secondary">
-                        ({product.reviews})
-                      </Typography>
-                    </Box>
-                    <Box sx={{ mt: 1, mx: 2.5, display: 'flex', flexDirection: 'column' }}>
-                      <Typography variant="caption" color="text.secondary">
-                        Effective Price
-                      </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 1 }}>
-                        <Typography variant="body1" color="error">
-                          -{product.discountPercentage}%
+      <Box display="flex">
+        <Box p={2} width="250px">
+          <Typography variant="h6">Filters</Typography>
+          <Box my={2}>
+            <Typography gutterBottom>Price Range</Typography>
+            <Slider
+              value={priceRange}
+              onChange={handlePriceChange}
+              valueLabelDisplay="auto"
+              min={0}
+              max={1000}
+            />
+            <Typography>₹{priceRange[0]} - ₹{priceRange[1]}</Typography>
+          </Box>
+        </Box>
+        <Box flex="1" p={2}>
+          <Grid container spacing={2}>
+            {currentProducts.map(product => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
+                <motion.div whileHover={{ scale: 1.05 }}>
+                  <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <CardMedia
+                      component="img"
+                      image={product.image}
+                      alt={product.name}
+                      sx={{ height: 140, objectFit: 'contain', cursor: 'pointer' }}
+                      onClick={() => navigate(`/products/${product.id}`)}
+                    />
+                    <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                      <Box>
+                        <Typography variant="h6">{product.name}</Typography>
+                        <Rating value={product.rating} readOnly />
+                        <Typography variant="body2" color="text.secondary">
+                          {product.reviews} reviews
                         </Typography>
-                        <Typography variant="h5" color="text.primary">
-                          ₹{product.price}
-                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 1 }}>
+                          <Typography variant="body1" color="error">
+                            -{product.discountPercentage}%
+                          </Typography>
+                          <Typography variant="h5" color="text.primary">
+                            ₹{product.price}
+                          </Typography>
+                        </Box>
+                        <Typography variant="caption">₹{product.effectivePrice}/month No Cost EMI</Typography>
                       </Box>
-                      <Typography variant="caption">₹{product.effectivePrice}/month No Cost EMI</Typography>
-                    </Box>
-                  </CardContent>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleAddToCart(product)}
-                    sx={{ m: 1 }}
-                  >
-                    Add to Cart
-                  </Button>
-                </Card>
-              </motion.div>
-            </Grid>
-          ))}
-        </Grid>
-        <br />
-        <div className="flex justify-between bottom-0 mx-4">
-          <Button
-            variant="contained"
-            onClick={handlePrev}
-            disabled={currentPage === 1}
-          >
-            Prev
-          </Button>
-          <Typography>
-            Page {currentPage} of {totalPages}
-          </Typography>
-          <Button
-            variant="contained"
-            onClick={handleNext}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToCart(product);
+                        }}
+                        sx={{ mt: 2 }}
+                      >
+                        Add to Cart
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </Grid>
+            ))}
+          </Grid>
+          <br />
+          <Box display="flex" justifyContent="space-between" mt={2}>
+            <Button
+              variant="contained"
+              onClick={handlePrev}
+              disabled={currentPage === 1}
+            >
+              Prev
+            </Button>
+            <Typography>
+              Page {currentPage} of {totalPages}
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={handleNext}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </Box>
+        </Box>
+      </Box>
     </>
   );
 }
