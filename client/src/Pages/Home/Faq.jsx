@@ -4,12 +4,12 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 function Faq() {
   return (
-    <Container maxWidth="xl"> 
-      <Box display="flex" flexDirection="column" sx={{ padding: '20px', paddingLeft:'90px'}} >
+    <Container maxWidth="lg"> 
+      <Box display="flex" flexDirection="column" sx={{ paddingBottom: '20px',marginTop: '20px'}} >
         <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '20px', }}>
           FAQs
         </Typography>
-        <Box width="89%">
+        <Box width="100%">
           <Accordion sx={{ width: '100%' }} >
             <AccordionSummary
               expandIcon={<ArrowDropDownIcon />}
