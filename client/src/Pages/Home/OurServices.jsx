@@ -42,7 +42,7 @@ const services = [
 
 function OurServices() {
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="lg">
       <Box py={4} px={2}>
         <Typography variant="h4" sx={{ mb: 3, textAlign: 'left' }}>Our Services</Typography>
         <Grid container spacing={2} justifyContent="center">
