@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Helmet } from 'react-helmet';
-import { Button, Grid, Typography, Box, Card, CardContent, CardMedia, Slider } from '@mui/material';
+import { Button, Grid, Typography, Box, Card, CardContent, CardMedia, Slider, Checkbox, FormControlLabel } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import { motion } from 'framer-motion';
 import { addToCart } from '../../features/CartSlice';
@@ -17,15 +17,28 @@ function Products() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
   const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [selectedBrands, setSelectedBrands] = useState([]);
 
   const handlePriceChange = (event, newValue) => {
     setPriceRange(newValue);
   };
 
+  const handleBrandChange = (event) => {
+    const brand = event.target.name;
+    if (event.target.checked) {
+      setSelectedBrands([...selectedBrands, brand]);
+    } else {
+      setSelectedBrands(selectedBrands.filter(selectedBrand => selectedBrand !== brand));
+    }
+  };
+
+  const uniqueBrands = [...new Set(products.map(product => product.brand))];
+
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
     product.price >= priceRange[0] &&
-    product.price <= priceRange[1]
+    product.price <= priceRange[1] &&
+    (selectedBrands.length === 0 || selectedBrands.includes(product.brand))
   );
 
   const indexLastProduct = currentPage * itemsPerPage;
@@ -67,6 +80,16 @@ function Products() {
               max={1000}
             />
             <Typography>₹{priceRange[0]} - ₹{priceRange[1]}</Typography>
+          </Box>
+          <Box my={2}>
+            <Typography gutterBottom>Brands</Typography>
+            {uniqueBrands.map(brand => (
+              <FormControlLabel
+                control={<Checkbox checked={selectedBrands.includes(brand)} onChange={handleBrandChange} name={brand} />}
+                label={brand}
+                key={brand}
+              />
+            ))}
           </Box>
         </Box>
         <Box flex="1" p={2}>

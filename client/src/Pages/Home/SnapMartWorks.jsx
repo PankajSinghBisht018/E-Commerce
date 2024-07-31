@@ -3,7 +3,7 @@ import { Box, Container, Grid, Typography } from '@mui/material';
 
 const SnapMartWorks = () => {
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="lg">
       <Box py={4}>
         <Typography variant="h4" gutterBottom>
           SnapMart Works? <br />
