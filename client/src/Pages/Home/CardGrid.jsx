@@ -29,7 +29,7 @@ const CardGrid = () => {
   }, []);
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="lg">
       <Box mt={8}>
         <Grid container spacing={4}>
           {cardImages.map((image, index) => (
