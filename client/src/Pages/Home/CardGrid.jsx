@@ -1,58 +1,57 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { motion } from 'framer-motion';
-import { Box, Container, Grid, Typography, Card, CardMedia, CardContent } from '@mui/material';
+import { Box, Container, Grid, Typography, Card, CardMedia, CardContent, Rating } from '@mui/material';
+import productData from '../productsData.json'; 
 
 const CardGrid = () => {
-  const [cardImages, setCardImages] = useState([]);
+  const [cards, setCards] = useState([]);
 
   useEffect(() => {
-    const fetchCardImages = async () => {
-      try {
-        const response = await axios.get('https://api.unsplash.com/search/photos', {
-          params: {
-            query: 'Samsung S24',
-            per_page: 6,
-            client_id: 'Rxp2BCKd-vTWqqUGG5oKD4_20iHiiTS1qTbKcW85bGg',
-          }
-        });
-        const fetchedImages = response.data.results.map(image => ({
-          src: image.urls.regular,
-        }));
-        setCardImages(fetchedImages);
-      } catch (error) {
-        console.error('Error fetching card images:', error);
-      }
+    const fetchCardData = () => {
+      const limitedData = productData.slice(0, 4).map(item => ({
+        name: item.name,
+        brand: item.brand,
+        rating: item.rating,
+        image: item.image,
+      }));
+      setCards(limitedData);
     };
 
-    fetchCardImages();
+    fetchCardData();
   }, []);
 
   return (
     <Container maxWidth="lg">
       <Box mt={8}>
         <Grid container spacing={4}>
-          {cardImages.map((image, index) => (
-            <Grid item xs={12} sm={6} md={4} lg={2} key={index}>
+          {cards.map((card, index) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <Card>
+                <Card className="border rounded-lg shadow-lg">
                   <CardMedia
-                    component={motion.img}
-                    image={image.src}
-                    alt={`Card image ${index + 1}`}
-                    className="w-full h-48 object-cover"
+                    component="img"
+                    image={card.image}
+                    style={{ objectFit: 'contain', height: '200px' }}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   />
                   <CardContent>
-                    <Typography variant="h6">Card</Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      Description
+                    <Typography variant="h6" className="font-bold">
+                      {card.name}
                     </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Brand: {card.brand}
+                    </Typography>
+                    <Box display="flex" alignItems="center" mt={1}>
+                      <Rating value={card.rating} precision={0.5} readOnly />
+                      <Typography variant="body2" color="textSecondary" ml={1}>
+                        ({card.rating})
+                      </Typography>
+                    </Box>
                   </CardContent>
                 </Card>
               </motion.div>
